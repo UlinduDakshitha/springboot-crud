@@ -1,5 +1,4 @@
 package lk.acpt.demo.service;
-
 import lk.acpt.demo.dto.EmployeeDto;
 import lk.acpt.demo.dto.SaveEmployeeRequestDto;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +15,7 @@ public interface EmployeeService {
 
     EmployeeDto searchEmployee(int id);
 
-    boolean updateEmployee(EmployeeDto employeeDto);
+    boolean updateEmployee(SaveEmployeeRequestDto employeeDto) throws IOException;
 
     EmployeeDto searchEmployeeByNic(String nic);
 }

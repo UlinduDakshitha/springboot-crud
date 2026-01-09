@@ -24,32 +24,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto saveEmployee(SaveEmployeeRequestDto employeeDto) throws IOException {
-        byte[] imageBytes = employeeDto.getAvatarFile().getBytes();
-        String imageName = employeeDto.getAvatarFile().getOriginalFilename();
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes);
-        BufferedImage bufferedImage = ImageIO.read(bis);
-
-        if (bufferedImage == null) {
-            throw new IOException("Could not decode image format. Ensure it's a valid image (e.g., PNG, JPEG).");
+        String imagePath = null;
+        if (employeeDto.getAvatarFile() != null && !employeeDto.getAvatarFile().isEmpty()) {
+            imagePath = saveImage(employeeDto.getAvatarFile());
         }
-
-        bis.close();
-
-        File outputFile = new File("src/main/resources/uploads/" + imageName);
-
-        outputFile.getParentFile().mkdirs();
-
-        boolean success = ImageIO.write(bufferedImage, "png", outputFile);
-
-        if (!success) {
-            throw new IOException("Failed to write image to file.");
-        }
-
-        String imagePath = outputFile.getAbsolutePath();
-
-        System.out.println("Image successfully saved to: " + imagePath);
-
 
         Employee save = employeeRepo.save(new Employee(employeeDto.getName(), employeeDto.getNic(), employeeDto.getAge(), employeeDto.getSalary(), imagePath));
         return new EmployeeDto(save.getId(), save.getName(), save.getNic(), save.getAge(), save.getSalary(), save.getAvatarPath());
@@ -93,7 +71,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public boolean updateEmployee(EmployeeDto employeeDto) {
+    public boolean updateEmployee(SaveEmployeeRequestDto employeeDto) throws IOException {
         Optional<Employee> optionalEmployee = employeeRepo.findById(employeeDto.getId());
 
         if (optionalEmployee.isPresent()) {
@@ -102,6 +80,11 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee.setNic(employeeDto.getNic());
             employee.setAge(employeeDto.getAge());
             employee.setSalary(employeeDto.getSalary());
+
+            if (employeeDto.getAvatarFile() != null && !employeeDto.getAvatarFile().isEmpty()) {
+                String imagePath = saveImage(employeeDto.getAvatarFile());
+                employee.setAvatarPath(imagePath);
+            }
 
             employeeRepo.save(employee);
             return true;
@@ -118,5 +101,33 @@ public class EmployeeServiceImpl implements EmployeeService {
             return new EmployeeDto(e.getId(), e.getName(), e.getNic(), e.getAge(), e.getSalary(),e.getAvatarPath());
         }
         return null;
+    }
+
+    private String saveImage(MultipartFile file) throws IOException {
+        byte[] imageBytes = file.getBytes();
+        String imageName = file.getOriginalFilename();
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes);
+        BufferedImage bufferedImage = ImageIO.read(bis);
+
+        if (bufferedImage == null) {
+            throw new IOException("Could not decode image format. Ensure it's a valid image (e.g., PNG, JPEG).");
+        }
+
+        bis.close();
+
+        File outputFile = new File("src/main/resources/uploads/" + imageName);
+
+        outputFile.getParentFile().mkdirs();
+
+        boolean success = ImageIO.write(bufferedImage, "png", outputFile);
+
+        if (!success) {
+            throw new IOException("Failed to write image to file.");
+        }
+
+        String imagePath = outputFile.getAbsolutePath();
+        System.out.println("Image successfully saved to: " + imagePath);
+        return imagePath;
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -61,8 +60,8 @@ public class EmployeeController {
         }
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Void> updateEmployee(@PathVariable int id, @RequestBody EmployeeDto employeeDto) {
+    @PutMapping(value = "/update/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<Void> updateEmployee(@PathVariable int id, @ModelAttribute SaveEmployeeRequestDto employeeDto) throws IOException {
         employeeDto.setId(id);
 
         boolean updated = employeeService.updateEmployee(employeeDto);
