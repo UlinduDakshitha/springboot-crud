@@ -38,8 +38,6 @@ public class EmployeeController {
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
-
-
     @GetMapping("/getNic/{nic}")
     public ResponseEntity<EmployeeDto> searchEmployeeByNic(@PathVariable String nic) {
         EmployeeDto employee = employeeService.searchEmployeeByNic(nic);
