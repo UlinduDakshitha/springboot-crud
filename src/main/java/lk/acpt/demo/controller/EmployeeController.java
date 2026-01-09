@@ -16,7 +16,6 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
 
-
     @PostMapping(value = "/save", consumes = "multipart/form-data")
     public ResponseEntity<EmployeeDto> saveEmployee(@ModelAttribute SaveEmployeeRequestDto employeeDto) throws IOException {
         EmployeeDto saveEmployee = employeeService.saveEmployee(employeeDto);
@@ -39,15 +38,7 @@ public class EmployeeController {
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
-    @GetMapping("/getId/{id}")
-    public ResponseEntity<EmployeeDto> searchEmployee(@PathVariable int id) {
-        EmployeeDto getId = employeeService.searchEmployee(id);
 
-        if (getId != null) {
-            return new ResponseEntity<>(getId, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
 
     @GetMapping("/getNic/{nic}")
     public ResponseEntity<EmployeeDto> searchEmployeeByNic(@PathVariable String nic) {
