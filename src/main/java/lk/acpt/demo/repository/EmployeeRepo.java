@@ -1,5 +1,4 @@
 package lk.acpt.demo.repository;
-
 import lk.acpt.demo.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 
